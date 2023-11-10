@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="filenames.js"></script>
+    <script src="menubar.js"></script>
+
+    <title>PlayGround</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('mj/1a.jpg');
+            background-repeat: repeat;
+            background-size: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"><div class="mjText" id="mjText"></div></div>
+
+    <script>
+        // top menu
+        createMenu();
+
+        // Create an array for mj images
+        imagePaths = [];
+        imageFilePaths.forEach((filePath, index) => {
+            if (filePath.split('/')[1] == 'mj' ){
+                imagePaths.push(filePath);
+            }
+        });
+
+        const container = document.getElementById('container');
+        let currentIndex = 0;
+        let backgroundSize = 50;
+        container.style.backgroundImage = `url('${imagePaths[currentIndex]}')`;
+        document.getElementById('mjText').innerHTML = `<p style="padding-bottom: 100px;">
+            I created these images with the help of A.I. I made them to be TILED and seamless, would be great for gift wrappers right. click or tap to change, left side -- right side ++
+            </p>
+        `;
+
+        function changeBackgroundImage(event) {
+            // Calculate the click position relative to the container
+            const clickX = event.clientX - container.getBoundingClientRect().left;
+            const containerWidth = container.clientWidth;
+
+            if (clickX >= containerWidth / 2 && currentIndex < imagePaths.length - 1) {
+                currentIndex++;
+            } else if (clickX < containerWidth / 2 && currentIndex > 0) {
+                currentIndex--;
+            } else if (clickX < containerWidth / 2 && currentIndex == 0) {
+                currentIndex = imagePaths.length - 1;
+            } else {
+                currentIndex = 0;
+            }
+
+            container.style.backgroundImage = `url('${imagePaths[currentIndex]}')`;
+            document.getElementById('mjText').innerHTML = `${currentIndex + 1} of ${imagePaths.length}`;
+        }
+
+        // Add an event listener to the container to change the background image on click
+        container.addEventListener('click', changeBackgroundImage);
+
+        ///////////// Function to ADJUST BACKGROUND SIZE horizontal scroll
+        function adjustBackgroundSize(event) {
+            if (event.deltaY > 0 && backgroundSize < 100) {
+                backgroundSize += 10;
+            } else if (event.deltaY < 0 && backgroundSize > 10) {
+                backgroundSize -= 10;
+            }
+
+            container.style.backgroundSize = `${backgroundSize}%`;
+        }
+        // Add a scroll event listener to the container to adjust background size
+        container.addEventListener('wheel', adjustBackgroundSize);
+
+    </script>
+</body>
+</html>

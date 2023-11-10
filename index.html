@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+  <script src="filenames.js"></script>
+  <script src="menubar.js"></script>
+</head>
+<body>
+  <!-- menubar.js should add menu bar right after body as first child -->
+  <div class="gallery" id="gallery">
+    <!-- JavaScript will use the imageFilePaths array here -->
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // create top menu
+      createMenu();
+
+      const gallery = document.getElementById('gallery');
+
+      // Use the imageFilePaths array from filenames.js
+      imageFilePaths.forEach((filePath, index) => {
+        console.log(filePath.split('/')[1]);
+        if (filePath.split('/')[1] != 'mj') {
+          const item = document.createElement('div');
+          item.className = 'item';
+
+          const a = document.createElement('a');
+          a.setAttribute('data-fancybox', 'gallery');
+          a.href = filePath;
+
+          const img = document.createElement('img');
+          img.src = filePath;
+          img.alt = `Project ${index + 1}`;
+
+          a.appendChild(img);
+
+          const itemCaption = document.createElement('div');
+          itemCaption.className = 'caption';
+          itemCaption.textContent = `${index + 1} - ${filePath.split('/')[2]}`;
+
+          item.appendChild(a);
+          item.appendChild(itemCaption);
+
+          gallery.appendChild(item);
+        }
+      });
+
+      // Initialize Fancybox
+      $("[data-fancybox]").fancybox({
+        animationEffect: "fade",
+        transitionEffect: "slide",
+        thumbs: {
+          autoStart: false,
+        },
+      });
+    });
+  </script>
+</body>
+</html>

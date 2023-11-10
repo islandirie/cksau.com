@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Posting Formatter</title>
+</head>
+<body>
+    <h1>Job Posting Formatter</h1>
+    
+    <form method="post">
+        <label for="unformatted_posting">Paste your unformatted job posting:</label><br>
+        <textarea id="unformatted_posting" name="unformatted_posting" rows="10" cols="50" required></textarea><br>
+        <input type="submit" value="Format">
+    </form>
+
+    {% if formatted_posting %}
+        <h2>Formatted Job Posting:</h2>
+        <p>{{ formatted_posting }}</p>
+    {% endif %}
+</body>
+</html>

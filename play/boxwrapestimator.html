@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Box Wrapping Estimator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../play.css">
+</head>
+<body id="boxWrapperForm">
+    <div class="boxWrapperForm">
+        <h1>Box Wrapping Estimator</h1>
+        
+        <form class="boxWrapperForm">
+            <label for="unit">Select Unit of Measurement:</label>
+            <select id="unit" name="unit">
+                <option value="inch" selected>Inches</option>
+                <option value="feet">Feet</option>
+                <option value="meter">Meters</option>
+            </select>
+            <br>
+
+            <label for="paperWidth">Size of Gift Wrapping Paper:</label>
+            <input type="number" step="0.01" id="paperWidth" name="paperWidth" value="30">
+            <label for="paperHeight"> x </label>
+            <input type="number" step="0.01" id="paperHeight" name="paperHeight" value="20">
+            <br>
+
+            <label for="overlap">Overlap:</label>
+            <input type="number" step="0.01" id="overlap" name="overlap" value="1">
+            <br>
+
+            <label for="boxWidth">Size of Box (Default Avg shirt box):</label>
+            <input type="number" step="0.01" id="boxWidth" name="boxWidth" value="12">
+            <label for="boxHeight"> x </label>
+            <input type="number" step="0.01" id="boxHeight" name="boxHeight" value="9">
+            <label for="boxDepth"> x </label>
+            <input type="number" step="0.01" id="boxDepth" name="boxDepth" value="2">
+            <br>
+
+            <input class='submit' type="submit" value="Calculate">
+        </form>
+
+        <p>Estimated Boxes Wrapped: <span id="result">--</span></p>
+    </div>
+
+    <script>
+        document.getElementById("boxWrapperForm").onsubmit = function (e) {
+            e.preventDefault();
+
+            // Get form values
+            const unit = document.getElementById("unit").value;
+            const paperWidth = parseFloat(document.getElementById("paperWidth").value);
+            const paperHeight = parseFloat(document.getElementById("paperHeight").value);
+            const overlap = parseFloat(document.getElementById("overlap").value);
+            const boxWidth = parseFloat(document.getElementById("boxWidth").value);
+            const boxHeight = parseFloat(document.getElementById("boxHeight").value);
+            const boxDepth = parseFloat(document.getElementById("boxDepth").value);
+
+            // Calculate paper area
+            let paperArea = 0;
+            if (unit === "inch") {
+                paperArea = paperWidth * paperHeight;
+            } else if (unit === "feet") {
+                paperArea = paperWidth * 12 * paperHeight * 12;
+            } else if (unit === "meter") {
+                paperArea = paperWidth * 39.3701 * paperHeight * 39.3701;
+            }
+
+            // Calculate adjusted paper requirement
+            let adjustedPaperRequired = 2 * (boxWidth + boxHeight) + 2 * (boxHeight + boxDepth) + 2 * (boxWidth + boxDepth);
+            adjustedPaperRequired += (8 * overlap); // Apply overlap
+            console.log(adjustedPaperRequired);
+
+            // Calculate estimated boxes wrapped
+            const boxesWrapped = Math.floor(paperArea / adjustedPaperRequired);
+
+            // Display the result
+            document.getElementById("result").textContent = boxesWrapped;
+        };
+    </script>
+</body>
+</html>

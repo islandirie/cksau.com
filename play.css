@@ -1,0 +1,22 @@
+/*** BOX WRAPPING ESTIMATOR ***/
+#boxWrapperForm {
+    background-color: #232323;
+    color: white;
+    text-align: center;   
+}
+.boxWrapperForm label[for=paperWidth],
+.boxWrapperForm label[for=overlap],
+.boxWrapperForm label[for=boxWidth]{
+    display: block;
+    padding-top: 25px;
+    padding-bottom: 10px;
+}
+.boxWrapperForm .submit{
+    padding: 10px;
+    margin-top: 25px;
+}
+.boxWrapperForm #result {
+    color: red;
+    font-size: 200%;
+    padding: 20px;
+}
