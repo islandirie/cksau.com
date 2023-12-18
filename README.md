@@ -1,5 +1,18 @@
 ## This is my portfolio at [cksau.com](https://cksau.com)
 
-This site is built with good old fashioned html / css / javascript. It is currently on AWS S3 bucket, with no server or database. Everything is on AWS from domain name using Route53, and a CDN (Content Delivery Network) I'm using is Elastic-Cache. The coolest thing about this site is that it costs me .50 a month and with ElasticCache its still really quick.
+##Overview:
+
+- Pinterest style website built using HTML, CSS, and  JavaScript.
+- Python used to automate image paths and naming.
+
+##Architecture:
+
+- Hosted on AWS S3 bucket.
+    -No server or database for a lightweight and cost-effective setup.
+- Domain managed by Route53.
+- Content Delivery Network (CDN) powered by ElasticCache.
+
+Cost-efficient setup with a monthly cost of only $0.50.
+Utilizes ElasticCache for enhanced performance, maintaining a quick site experience.
 
 ![aws-cost](aws-cost.png)
