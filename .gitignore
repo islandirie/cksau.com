@@ -4,3 +4,4 @@
 # images
 *.jpg
 *.png
+!aws-cost.png
