@@ -13,6 +13,6 @@
 - Content Delivery Network (CDN) powered by ElasticCache.
 
 ## Main Feature
-Cost-efficient setup, costs less than a single item at DollaTree
+Cost-efficient setup, costs less than a single item at Dollar Tree.
 
 ![aws-cost](aws-cost.png)
