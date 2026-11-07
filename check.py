@@ -151,6 +151,17 @@ def check_cli_resume() -> list[str]:
     return errs
 
 
+def check_portfolio_gallery() -> list[str]:
+    errs = []
+    index_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    if 'src="sorting.js"' not in index_html:
+        errs.append("index.html: missing sorting.js script tag")
+    for category in ("all", "web", "logos", "print"):
+        if f'data-category="{category}"' not in index_html:
+            errs.append(f"index.html: missing filter button for category '{category}'")
+    return errs
+
+
 def main() -> int:
     errors = []
 
@@ -184,6 +195,7 @@ def main() -> int:
     errors.extend(check_unit_tests())
     errors.extend(check_play_launcher())
     errors.extend(check_cli_resume())
+    errors.extend(check_portfolio_gallery())
 
     if errors:
         print("CHECKS FAILED:", file=sys.stderr)
