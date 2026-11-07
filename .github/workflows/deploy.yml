@@ -1,0 +1,46 @@
+name: Deploy to S3 & CloudFront
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::228101668121:role/github-cksau-deploy
+          aws-region: us-east-1
+
+      - name: Sync code to S3 (preserving images/)
+        run: |
+          aws s3 sync . s3://cksau-website --delete \
+            --exclude "images/*" \
+            --exclude "E28V6ZSCH5HVUA*" \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude ".gitignore" \
+            --exclude ".DS_Store" \
+            --exclude "*/.DS_Store" \
+            --exclude "README.md" \
+            --exclude "test-ai-git.md" \
+            --exclude "aws-cost.png" \
+            --exclude "filenames.py" \
+            --exclude "sync-images.sh"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E28V6ZSCH5HVUA \
+            --paths "/*"

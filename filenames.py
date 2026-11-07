@@ -13,6 +13,8 @@ for root, dirs, files in os.walk(image_folder):
             file_path = os.path.join(root, file)
             image_files.append(file_path)
 
+image_files.sort()
+
 # Create a JavaScript array containing the file paths
 js_array = "const imageFilePaths = " + str(image_files)
 
