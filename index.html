@@ -42,23 +42,35 @@
         return 5;
       }
 
+      let currentItems = [];
+
+      function rebalanceColumns() {
+        const colCount = getColumnCount();
+        const cols = Array.from({ length: colCount }, () => {
+          const col = document.createElement("div");
+          col.className = "gallery-col";
+          return col;
+        });
+        gallery.replaceChildren(...cols);
+
+        currentItems.forEach((item) => {
+          let shortestCol = cols[0];
+          for (let i = 1; i < cols.length; i++) {
+            if (cols[i].offsetHeight < shortestCol.offsetHeight) {
+              shortestCol = cols[i];
+            }
+          }
+          shortestCol.appendChild(item);
+        });
+      }
+
       function renderGallery(category) {
         activeCategory = category;
         const paths = category === "all"
           ? allPortfolioPaths
           : sortGalleryByCategory(allPortfolioPaths, category);
 
-        gallery.replaceChildren();
-
-        const colCount = getColumnCount();
-        const cols = Array.from({ length: colCount }, () => {
-          const col = document.createElement("div");
-          col.className = "gallery-col";
-          gallery.appendChild(col);
-          return col;
-        });
-
-        paths.forEach((filePath, index) => {
+        currentItems = paths.map((filePath, index) => {
           const item = document.createElement("div");
           item.className = "item";
 
@@ -71,6 +83,7 @@
           const img = document.createElement("img");
           img.src = filePath;
           img.alt = captionText || `Project ${index + 1}`;
+          img.addEventListener("load", rebalanceColumns);
 
           a.appendChild(img);
 
@@ -80,8 +93,10 @@
 
           item.appendChild(a);
           item.appendChild(itemCaption);
-          cols[index % colCount].appendChild(item);
+          return item;
         });
+
+        rebalanceColumns();
 
         $("[data-fancybox]").fancybox({
           animationEffect: "fade",
@@ -97,7 +112,7 @@
         const nextColCount = getColumnCount();
         if (nextColCount !== lastColCount) {
           lastColCount = nextColCount;
-          renderGallery(activeCategory);
+          rebalanceColumns();
         }
       });
 
