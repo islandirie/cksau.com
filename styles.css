@@ -99,16 +99,32 @@ a {
   height: 65px;
   background-color: black;
   z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .top-menu ul {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 76px;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
 .top-menu li {
-  display: inline-block;
-  padding: 0 50px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.top-menu li a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
 }
 
 svg {
