@@ -5,3 +5,8 @@
 *.jpg
 *.png
 !aws-cost.png
+
+#openspec
+.openspec*
+.opencode/
+/openspec/

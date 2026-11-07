@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      - develop
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,7 +15,18 @@ permissions:
   contents: read
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run HTML & JS checks
+        run: python3 check.py
+
   deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,12 +46,16 @@ jobs:
             --exclude ".git/*" \
             --exclude ".github/*" \
             --exclude ".gitignore" \
+            --exclude ".opencode/*" \
+            --exclude ".openspec*" \
+            --exclude "openspec/*" \
             --exclude ".DS_Store" \
             --exclude "*/.DS_Store" \
             --exclude "README.md" \
             --exclude "test-ai-git.md" \
             --exclude "aws-cost.png" \
             --exclude "filenames.py" \
+            --exclude "check.py" \
             --exclude "sync-images.sh"
 
       - name: Invalidate CloudFront cache
