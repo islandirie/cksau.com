@@ -7,83 +7,236 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="filenames.js"></script>
     <script src="menubar.js"></script>
-
     <title>PlayGround</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        #container {
-            width: 100vw;
-            height: 100vh;
-            background-image: url('mj/1a.jpg');
-            background-repeat: repeat;
-            background-size: 50%;
-        }
-    </style>
 </head>
 
-<body>
-    <div id="container"><div class="mjText" id="mjText"></div></div>
+<body class="play-os">
+    <main class="os-screen" id="os-screen">
+        <header class="os-status-bar">
+            <span class="os-carrier">PlayOS</span>
+            <span class="os-clock" id="os-clock"></span>
+        </header>
+
+        <section class="os-grid" aria-label="Applications">
+            <a class="os-app" href="#tiles" data-app="tiles">
+                <div class="os-icon os-icon-tiles">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                </div>
+                <span class="os-label">AI Seamless Tiles</span>
+            </a>
+
+            <a class="os-app" href="#boxwrap" data-app="boxwrap">
+                <div class="os-icon os-icon-boxwrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5l-6-3 6-3 6 3-6 3zm-1 4.2L3 9.7v7.3l8 4v-7.3zm2 0v7.3l8-4V9.7l-8 4z"></path>
+                    </svg>
+                </div>
+                <span class="os-label">Box Wrap Estimator</span>
+            </a>
+
+            <a class="os-app" href="#rss" data-app="rss">
+                <div class="os-icon os-icon-rss">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <circle cx="6.18" cy="17.82" r="2.18"></circle>
+                        <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path>
+                    </svg>
+                </div>
+                <span class="os-label">Daily Tech Digest</span>
+            </a>
+
+            <a class="os-app" href="#big5" data-app="big5">
+                <div class="os-icon os-icon-big5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path d="M3 13h2v8H3v-8zm4-6h2v14H7V7zm4 3h2v11h-2V10zm4-7h2v18h-2V3zm4 9h2v9h-2v-9z"></path>
+                    </svg>
+                </div>
+                <span class="os-label">Big Five Personality</span>
+            </a>
+        </section>
+    </main>
+
+    <div class="app-modal" id="app-modal" hidden aria-modal="true" role="dialog">
+        <div class="app-modal-window">
+            <header class="app-modal-header">
+                <span class="app-modal-title" id="app-modal-title">App</span>
+                <div class="app-modal-actions">
+                    <a class="app-modal-open" id="app-modal-open" href="#" hidden>Full Page</a>
+                    <button type="button" class="app-modal-close" id="app-modal-close" aria-label="Close app">X</button>
+                </div>
+            </header>
+
+            <div class="app-modal-body">
+                <div id="tiles-stage" class="tiles-stage" hidden>
+                    <div class="mjText" id="mjText"></div>
+                </div>
+                <div id="iframe-host" class="iframe-host" hidden></div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // top menu
         createMenu();
 
-        // Create an array for mj images
-        imagePaths = [];
-        imageFilePaths.forEach((filePath, index) => {
-            if (filePath.split('/')[1] == 'mj' ){
+        const APPS = {
+            tiles: {
+                title: "AI Seamless Tiles",
+                type: "tiles"
+            },
+            boxwrap: {
+                title: "Box Wrap Estimator",
+                type: "iframe",
+                url: "play/boxwrapestimator.html"
+            },
+            rss: {
+                title: "Daily Tech Digest",
+                type: "iframe",
+                url: "https://islandirie.github.io/my-rss-feed"
+            },
+            big5: {
+                title: "Big Five Personality",
+                type: "iframe",
+                url: "play/big5/Big Five Aspects _ Free Personality Test _ Results.html"
+            }
+        };
+
+        // Update status bar clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById("os-clock").textContent = now.toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit"
+            });
+        }
+        updateClock();
+
+        // AI Seamless Tiles logic
+        const imagePaths = [];
+        imageFilePaths.forEach((filePath) => {
+            if (filePath.split("/")[1] === "mj") {
                 imagePaths.push(filePath);
             }
         });
 
-        const container = document.getElementById('container');
+        const tilesStage = document.getElementById("tiles-stage");
+        const mjText = document.getElementById("mjText");
         let currentIndex = 0;
         let backgroundSize = 50;
-        container.style.backgroundImage = `url('${imagePaths[currentIndex]}')`;
-        document.getElementById('mjText').innerHTML = `<p style="padding-bottom: 100px;">
-            I created these images with the help of A.I. I made them to be TILED and seamless, would be great for gift wrappers right. click or tap to change, left side -- right side ++
-            </p>
-        `;
+
+        function resetTilesIntro() {
+            if (imagePaths.length > 0) {
+                tilesStage.style.backgroundImage = `url('${imagePaths[currentIndex]}')`;
+            }
+            tilesStage.style.backgroundSize = `${backgroundSize}%`;
+            mjText.innerHTML = `<p class="tiles-caption">
+                I created these images with the help of A.I. I made them to be TILED and seamless, would be great for gift wrappers right. Click or tap to change: left side -- right side ++
+            </p>`;
+        }
 
         function changeBackgroundImage(event) {
-            // Calculate the click position relative to the container
-            const clickX = event.clientX - container.getBoundingClientRect().left;
-            const containerWidth = container.clientWidth;
+            if (imagePaths.length === 0) return;
+            const clickX = event.clientX - tilesStage.getBoundingClientRect().left;
+            const containerWidth = tilesStage.clientWidth;
 
             if (clickX >= containerWidth / 2 && currentIndex < imagePaths.length - 1) {
                 currentIndex++;
             } else if (clickX < containerWidth / 2 && currentIndex > 0) {
                 currentIndex--;
-            } else if (clickX < containerWidth / 2 && currentIndex == 0) {
+            } else if (clickX < containerWidth / 2 && currentIndex === 0) {
                 currentIndex = imagePaths.length - 1;
             } else {
                 currentIndex = 0;
             }
 
-            container.style.backgroundImage = `url('${imagePaths[currentIndex]}')`;
-            document.getElementById('mjText').innerHTML = `${currentIndex + 1} of ${imagePaths.length}`;
+            tilesStage.style.backgroundImage = `url('${imagePaths[currentIndex]}')`;
+            mjText.innerHTML = `<p class="tiles-caption">${currentIndex + 1} of ${imagePaths.length}</p>`;
         }
 
-        // Add an event listener to the container to change the background image on click
-        container.addEventListener('click', changeBackgroundImage);
-
-        ///////////// Function to ADJUST BACKGROUND SIZE horizontal scroll
         function adjustBackgroundSize(event) {
             if (event.deltaY > 0 && backgroundSize < 100) {
                 backgroundSize += 10;
             } else if (event.deltaY < 0 && backgroundSize > 10) {
                 backgroundSize -= 10;
             }
-
-            container.style.backgroundSize = `${backgroundSize}%`;
+            tilesStage.style.backgroundSize = `${backgroundSize}%`;
         }
-        // Add a scroll event listener to the container to adjust background size
-        container.addEventListener('wheel', adjustBackgroundSize);
 
+        tilesStage.addEventListener("click", changeBackgroundImage);
+        tilesStage.addEventListener("wheel", adjustBackgroundSize);
+
+        // Modal & Hash routing (supports [X] button and mobile Back gesture)
+        const modal = document.getElementById("app-modal");
+        const modalTitle = document.getElementById("app-modal-title");
+        const modalOpenLink = document.getElementById("app-modal-open");
+        const modalCloseBtn = document.getElementById("app-modal-close");
+        const iframeHost = document.getElementById("iframe-host");
+        let openedFromGrid = false;
+
+        document.querySelectorAll(".os-app").forEach((link) => {
+            link.addEventListener("click", () => {
+                openedFromGrid = true;
+            });
+        });
+
+        function syncModalFromHash() {
+            const appId = window.location.hash.replace(/^#/, "");
+            const app = APPS[appId];
+
+            if (!app) {
+                modal.hidden = true;
+                tilesStage.hidden = true;
+                iframeHost.hidden = true;
+                iframeHost.replaceChildren();
+                modalOpenLink.hidden = true;
+                return;
+            }
+
+            modalTitle.textContent = app.title;
+            modal.hidden = false;
+
+            if (app.type === "tiles") {
+                iframeHost.hidden = true;
+                iframeHost.replaceChildren();
+                modalOpenLink.hidden = true;
+                tilesStage.hidden = false;
+                resetTilesIntro();
+            } else {
+                tilesStage.hidden = true;
+                const iframe = document.createElement("iframe");
+                iframe.className = "app-iframe";
+                iframe.title = app.title;
+                iframe.src = app.url;
+                iframeHost.replaceChildren(iframe);
+                iframeHost.hidden = false;
+                modalOpenLink.href = app.url;
+                modalOpenLink.hidden = false;
+            }
+        }
+
+        function closeModal() {
+            if (!window.location.hash) return;
+            if (openedFromGrid) {
+                openedFromGrid = false;
+                window.history.back();
+            } else {
+                window.history.replaceState(null, "", window.location.pathname + window.location.search);
+                syncModalFromHash();
+            }
+        }
+
+        modalCloseBtn.addEventListener("click", closeModal);
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        window.addEventListener("hashchange", syncModalFromHash);
+        syncModalFromHash();
     </script>
 </body>
+
 </html>

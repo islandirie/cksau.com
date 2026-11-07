@@ -124,6 +124,33 @@ def check_unit_tests() -> list[str]:
     return []
 
 
+def check_play_launcher() -> list[str]:
+    errs = []
+    if (ROOT / "play" / "gpt-formatter").exists():
+        errs.append("play/gpt-formatter directory should be removed")
+    play_html = (ROOT / "play.html").read_text(encoding="utf-8")
+    for app_id in ("#tiles", "#boxwrap", "#rss", "#big5"):
+        if f'href="{app_id}"' not in play_html:
+            errs.append(f"play.html: missing launcher link for {app_id}")
+    if 'id="app-modal-close"' not in play_html:
+        errs.append("play.html: missing #app-modal-close button")
+    if "hashchange" not in play_html:
+        errs.append("play.html: missing hashchange listener for back navigation")
+    return errs
+
+
+def check_cli_resume() -> list[str]:
+    errs = []
+    resume_html = (ROOT / "resume.html").read_text(encoding="utf-8")
+    for required in ("Lockheed Martin", "Funnel Leasing", "United States Air Force", "CompTIA Security+"):
+        if required not in resume_html:
+            errs.append(f"resume.html: missing required text '{required}'")
+    for forbidden in ("843-806-9639", "Home Depot", "Palauanvibe.biz"):
+        if forbidden in resume_html:
+            errs.append(f"resume.html: contains excluded text '{forbidden}'")
+    return errs
+
+
 def main() -> int:
     errors = []
 
@@ -155,6 +182,8 @@ def main() -> int:
             errors.extend(check_js_syntax(script, f"{rel}<script #{idx}>"))
 
     errors.extend(check_unit_tests())
+    errors.extend(check_play_launcher())
+    errors.extend(check_cli_resume())
 
     if errors:
         print("CHECKS FAILED:", file=sys.stderr)
